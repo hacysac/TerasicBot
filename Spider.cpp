@@ -212,6 +212,19 @@ public:
 		}
 	}
 
+	// Walk a square: 4 sides, turning right at each corner.
+	void WalkSquare(int sideSteps)
+	{
+		for (int side = 0; side < 4; side++)
+		{
+			for (int i = 0; i < sideSteps; i++)
+				MoveForward();
+			for (int i = 0; i < 4; i++)
+				TurnRight();
+		}
+		Reset();   // finish standing in the neutral pose
+	}
+
 	void Standup()
 	{
 		bool bSuccess;

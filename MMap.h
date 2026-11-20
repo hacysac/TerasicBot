@@ -65,6 +65,8 @@ public:
 	bool isMapped();
 	bool Motor_Reg32_Write(uint32_t motorId, uint32_t regOffset, uint32_t value);
 	uint32_t Motor_Reg32_Read(uint32_t motorId, uint32_t regOffset);
+	void RegisterWrite(unsigned int reg_offset, int value);
+	int RegisterRead(unsigned int reg_offset);
 };
 
 #endif /* MMAP_H_ */

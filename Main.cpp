@@ -39,6 +39,10 @@ int main(int argc, char *argv[])
 				cout << "CMD_LEFT" << endl;
 				spider.TurnLeft();
 				break;
+			case 'q':
+				cout << "CMD_SQUARE" << endl;
+				spider.WalkSquare(4, 4);
+				break;
 			case 's':
 				cout << "CMD_STOP" << endl;
 				done = true;

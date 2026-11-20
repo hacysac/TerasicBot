@@ -117,3 +117,25 @@ uint32_t MMap::Motor_Reg32_Read(uint32_t motorId, uint32_t regOffset) {
 	uint32_t* ptr = getMotorStart(motorId) + regOffset;
 	return *ptr;
 }
+
+/**
+ * Write a 4-byte value at the specified general-purpose I/O location.
+ *
+ * @param reg_offset	Offset where device is mapped.
+ * @param value		Value to be written.
+ */
+void MMap::RegisterWrite(unsigned int reg_offset, int value)
+{
+	* (volatile unsigned int *)((char*)m_virtual_base + START_OFFSET + reg_offset) = value;
+}
+
+/**
+ * Read a 4-byte value from the specified general-purpose I/O location.
+ *
+ * @param reg_offset	Offset where device is mapped.
+ * @return		Value read.
+ */
+int MMap::RegisterRead(unsigned int reg_offset)
+{
+	return * (volatile unsigned int *)((char*)m_virtual_base + START_OFFSET + reg_offset);
+}
