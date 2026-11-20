@@ -5,13 +5,13 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    Spider Spider;
+    Spider spider;
 
 	cout << "Spider Init" << endl;
-	Spider.Init();
+	spider.Init();
 	
 	cout << "Spider Standup" << endl;	
-	Spider.Standup();
+	spider.Standup();
 
 	cout << "Waiting for Command..." << endl;
 	bool done = false;
@@ -25,7 +25,19 @@ int main(int argc, char *argv[])
 		{
 			case 'f':
 				cout << "CMD_FORDWARD" << endl;
-				Spider.MoveForward();
+				spider.MoveForward();
+				break;
+			case 'b':
+				cout << "CMD_BACKWARD" << endl;
+				spider.MoveBackward();
+				break;
+			case 'r':
+				cout << "CMD_RIGHT" << endl;
+				spider.TurnRight();
+				break;
+			case 'l':
+				cout << "CMD_LEFT" << endl;
+				spider.TurnLeft();
 				break;
 			case 's':
 				cout << "CMD_STOP" << endl;

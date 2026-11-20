@@ -48,8 +48,8 @@ private:
 	 */
 	int speedToDelay(int s)
 	{
-		float percent = s / 100;
-		return DELAY_MAX - ((int)percent * (DELAY_MAX - DELAY_MIN));
+		float percent = s / 100.0f;
+		return DELAY_MAX - (int)(percent * (DELAY_MAX - DELAY_MIN));
 	}
 
 public:
@@ -60,7 +60,7 @@ public:
 	ServoMotor(MMap *mmio, int motorId)
 	{
 		m_nMotorID = motorId;
-		m_fAngle = 180.0;
+		m_fAngle = 0.0;
 		m_speed = 0;
 
 		_mmio = mmio;
@@ -70,7 +70,15 @@ public:
 		// The delay
 		// Also set the Abort field to 0
 		_mmio->Motor_Reg32_Write(m_nMotorID, PWM_PERIOD, T_20MS);
-		_mmio->Motor_Reg32_Write(m_nMotorID, PWM_DC, 0);
+		uint32_t current = _mmio->Motor_Reg32_Read(m_nMotorID, PWM_DC);
+		if (current >= PWM_MIN && current <= PWM_MAX) {
+			// Still holding a position from a previous run, so keep it
+			m_fAngle = DEGREE_MIN + (current - PWM_MIN) * (DEGREE_MAX -DEGREE_MIN) / (float)(PWM_MAX - PWM_MIN);
+		} else {
+			// Fresh start: stay off until Init() enables it
+			_mmio->Motor_Reg32_Write(m_nMotorID, PWM_DC, 0);
+			m_fAngle = 0.0;
+		}
 		_mmio->Motor_Reg32_Write(m_nMotorID, PWM_DELAY, speedToDelay(50));
 		_mmio->Motor_Reg32_Write(m_nMotorID, PWM_ABORT, 0);
 	}
@@ -140,4 +148,3 @@ public:
 		Move(0.0);
 	}
 };
-

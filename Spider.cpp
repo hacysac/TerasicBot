@@ -26,7 +26,10 @@ class Spider {
 
 	typedef enum{
 		FWD,
-		BACK
+		BACK,
+		LEFT,
+		RIGHT,
+		STOP
 	} DIR;
 
 	SpiderLeg *m_szLeg[LEG_NUM];
@@ -54,7 +57,7 @@ public:
 			m_szLeg[i] = new SpiderLeg(_mmio, szMotorID[i * 3], szMotorID[i * 3 + 1], szMotorID[i * 3 + 2], i == LEG_RF || i == LEG_RB || i == LEG_RM);
 		}
 		lastStep = TRIPOD2;
-		lastDir = FWD;
+		lastDir = STOP;
 	}
 
 	~Spider() { for (int i = 0; i < LEG_NUM; i++)  delete m_szLeg[i]; }
@@ -64,9 +67,7 @@ public:
 		//// Init -- The servo angle needs to be explicitly set to 0.0 to enable.
 		for (int i = 0; i < LEG_NUM; i++){
 			m_szLeg[i]->MoveJoint(SpiderLeg::Hip, 0.0);
-			WaitReady();
 			m_szLeg[i]->MoveJoint(SpiderLeg::Knee, 0.0);
-			WaitReady();
 			m_szLeg[i]->MoveJoint(SpiderLeg::Ankle, 0.0);
 			WaitReady();
 		}
@@ -90,6 +91,9 @@ public:
 
 	void MoveForward()
 	{
+		if (lastDir == LEFT || lastDir == RIGHT){
+			Reset();
+		}
 		if ((lastStep == TRIPOD2 && lastDir == FWD) || (lastStep == TRIPOD1 && lastDir == BACK)){
 			MoveTripod(TRIPOD1, SpiderLeg::Knee, Knee_Up_Base, Knee_Up_Base, Knee_Up_Base);
 			WaitReady();
@@ -110,6 +114,87 @@ public:
 			lastStep = TRIPOD2;
 		}
 		lastDir = FWD;
+	}
+
+	void MoveBackward()
+	{
+		if (lastDir == LEFT || lastDir == RIGHT){
+			Reset();
+		}
+		if ((lastStep == TRIPOD1 && lastDir == FWD) || (lastStep == TRIPOD2 && lastDir == BACK)){
+			MoveTripod(TRIPOD1, SpiderLeg::Knee, Knee_Up_Base, Knee_Up_Base, Knee_Up_Base);
+			WaitReady();
+			MoveTripod(TRIPOD1, SpiderLeg::Hip, HipF_Base - 20, HipM_Base - 20, HipB_Base - 20);
+			MoveTripod(TRIPOD2, SpiderLeg::Hip, HipF_Base + 20, HipM_Base + 20, HipB_Base + 20);
+			WaitReady();
+			MoveTripod(TRIPOD1, SpiderLeg::Knee, Knee_Down_Base, Knee_Down_Base, Knee_Down_Base);
+			WaitReady();
+			lastStep = TRIPOD1;
+		}else{
+			MoveTripod(TRIPOD2, SpiderLeg::Knee, Knee_Up_Base, Knee_Up_Base, Knee_Up_Base);
+			WaitReady();
+			MoveTripod(TRIPOD1, SpiderLeg::Hip, HipF_Base + 20, HipM_Base + 20, HipB_Base + 20);
+			MoveTripod(TRIPOD2, SpiderLeg::Hip, HipF_Base - 20, HipM_Base - 20, HipB_Base - 20);
+			WaitReady();
+			MoveTripod(TRIPOD2, SpiderLeg::Knee, Knee_Down_Base, Knee_Down_Base, Knee_Down_Base);
+			WaitReady();
+			lastStep = TRIPOD2;
+		}
+		lastDir = BACK;
+	}
+
+	void TurnRight()
+	{
+		if (lastDir == FWD || lastDir == BACK){
+			Reset();
+		}
+		if ((lastStep == TRIPOD2 && lastDir == RIGHT) || (lastStep == TRIPOD1 && lastDir == LEFT)){
+			MoveTripod(TRIPOD1, SpiderLeg::Knee, Knee_Up_Base, Knee_Up_Base, Knee_Up_Base);
+			WaitReady();
+			MoveTripod(TRIPOD1, SpiderLeg::Hip, HipF_Base - 20, HipM_Base + 20, HipB_Base - 20);
+			MoveTripod(TRIPOD2, SpiderLeg::Hip, HipF_Base - 20, HipM_Base + 20, HipB_Base - 20);
+			WaitReady();
+			MoveTripod(TRIPOD1, SpiderLeg::Knee, Knee_Down_Base, Knee_Down_Base, Knee_Down_Base);
+			WaitReady();
+			lastStep = TRIPOD1;
+		}else{
+			MoveTripod(TRIPOD2, SpiderLeg::Knee, Knee_Up_Base, Knee_Up_Base, Knee_Up_Base);
+			WaitReady();
+			MoveTripod(TRIPOD1, SpiderLeg::Hip, HipF_Base + 20, HipM_Base - 20, HipB_Base + 20);
+			MoveTripod(TRIPOD2, SpiderLeg::Hip, HipF_Base + 20, HipM_Base - 20, HipB_Base + 20);
+			WaitReady();
+			MoveTripod(TRIPOD2, SpiderLeg::Knee, Knee_Down_Base, Knee_Down_Base, Knee_Down_Base);
+			WaitReady();
+			lastStep = TRIPOD2;
+		}
+		lastDir = RIGHT;
+	}
+
+	void TurnLeft()
+	{
+		if (lastDir == FWD || lastDir == BACK){
+			Reset();
+		}
+		if ((lastStep == TRIPOD1 && lastDir == RIGHT) || (lastStep == TRIPOD2 && lastDir == LEFT)){
+			MoveTripod(TRIPOD1, SpiderLeg::Knee, Knee_Up_Base, Knee_Up_Base, Knee_Up_Base);
+			WaitReady();
+			MoveTripod(TRIPOD1, SpiderLeg::Hip, HipF_Base + 20, HipM_Base - 20, HipB_Base + 20);
+			MoveTripod(TRIPOD2, SpiderLeg::Hip, HipF_Base + 20, HipM_Base - 20, HipB_Base + 20);
+			WaitReady();
+			MoveTripod(TRIPOD1, SpiderLeg::Knee, Knee_Down_Base, Knee_Down_Base, Knee_Down_Base);
+			WaitReady();
+			lastStep = TRIPOD1;
+		}else{
+			MoveTripod(TRIPOD2, SpiderLeg::Knee, Knee_Up_Base, Knee_Up_Base, Knee_Up_Base);
+			WaitReady();
+			MoveTripod(TRIPOD1, SpiderLeg::Hip, HipF_Base - 20, HipM_Base + 20, HipB_Base - 20);
+			MoveTripod(TRIPOD2, SpiderLeg::Hip, HipF_Base - 20, HipM_Base + 20, HipB_Base - 20);
+			WaitReady();
+			MoveTripod(TRIPOD2, SpiderLeg::Knee, Knee_Down_Base, Knee_Down_Base, Knee_Down_Base);
+			WaitReady();
+			lastStep = TRIPOD2;
+		}
+		lastDir = LEFT;
 	}
 
 
@@ -151,7 +236,7 @@ public:
 				m_szLeg[i]->MoveJoint(SpiderLeg::Ankle, AnkleAngle);
 			} 
 			bSuccess = WaitReady();
-			KneeAngle -= 5.0;
+			KneeAngle -= 1.0;
 		}
 		
 		if (bSuccess) Reset();
@@ -177,6 +262,7 @@ public:
 			m_szLeg[LEG_NUM - i - 1]->MoveJoint(SpiderLeg::Knee, Knee_Down_Base);
 			WaitReady();
 		}
+		lastDir = STOP;
 	}
 
 };
