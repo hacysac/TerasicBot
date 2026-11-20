@@ -64,7 +64,7 @@ public:
 
 	void Init()
 	{
-		//// Init -- The servo angle needs to be explicitly set to 0.0 to enable.
+		// Init -- The servo angle needs to be explicitly set to 0.0 to enable.
 		for (int i = 0; i < LEG_NUM; i++){
 			m_szLeg[i]->MoveJoint(SpiderLeg::Hip, 0.0);
 			m_szLeg[i]->MoveJoint(SpiderLeg::Knee, 0.0);
@@ -222,14 +222,14 @@ public:
 			for (int i = 0; i < 4; i++)
 				TurnRight();
 		}
-		Reset();   // finish standing in the neutral pose
+		Reset();
 	}
 
 	void Standup()
 	{
 		bool bSuccess;
 
-		//// Stand up  -- Adjust Hip
+		// Stand up  -- Adjust Hip
 
 		float fszJoin0Angle[] = {HipF_Base, 0, HipB_Base,
 								HipF_Base, 0, HipB_Base};
@@ -238,7 +238,7 @@ public:
 		
 		bSuccess = WaitReady();
 
-		//// Stand up  -- Adjust Knee ankle
+		// Stand up  -- Adjust Knee ankle
 		float KneeAngle = 90;
 		const float AnkleAngle = 45.0;
 		while (bSuccess && KneeAngle >= 45.0)
@@ -259,9 +259,7 @@ public:
 	{
 		float fszJoin0Angle[] = {HipF_Base, 0, HipB_Base,
 								 HipF_Base, 0, HipB_Base};
-
-		////////////////////////
-		////Reset Hip Knee ankle
+		// Reset Hip Knee ankle
 		for (int i = 0; i < LEG_NUM - 3; i++)
 		{
 			m_szLeg[i]->MoveJoint(SpiderLeg::Knee, Knee_Up_Base);

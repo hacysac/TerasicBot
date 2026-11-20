@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 				break;
 			case 'q':
 				cout << "CMD_SQUARE" << endl;
-				spider.WalkSquare(4, 4);
+				spider.WalkSquare(4);
 				break;
 			case 's':
 				cout << "CMD_STOP" << endl;
